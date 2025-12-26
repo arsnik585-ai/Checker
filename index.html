@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PWA Сканер Чеков</title>
+    
+    <!-- Подключение Tailwind и Tesseract через CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+    
+    <meta name="theme-color" content="#1f2937" />
+    <link rel="manifest" href="manifest.json" />
+
+    <style>
+      #error-display { display: none; padding: 20px; color: #ef4444; background: #fee2e2; border: 1px solid #ef4444; margin: 20px; border-radius: 8px; font-family: sans-serif; z-index: 9999; position: relative; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+    <div id="error-display"></div>
+    <div id="root"></div>
+
+    <!-- Точка входа для Vite. При сборке (npm run build) Vite сам заменит это на правильный JS-путь -->
+    <script type="module" src="./index.tsx"></script>
+
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        var display = document.getElementById('error-display');
+        if (display) {
+          display.style.display = 'block';
+          display.innerHTML = '<strong>Ошибка запуска:</strong> ' + msg + '<br><small>' + url + ':' + line + '</small>';
+        }
+        return false;
+      };
+
+      // Безопасная регистрация Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // Проверяем, не находимся ли мы в среде предпросмотра, где SW часто блокируются
+          const isPreview = window.location.hostname.includes('scf.usercontent.goog') || 
+                          window.location.hostname.includes('ai.studio');
+          
+          if (!isPreview) {
+            navigator.serviceWorker.register('./service-worker.js')
+              .then(reg => console.log('SW Registered'))
+              .catch(err => console.warn('SW Registration failed:', err));
+          } else {
+            console.log('Service Worker disabled in preview environment to prevent origin errors.');
+          }
+        });
+      }
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

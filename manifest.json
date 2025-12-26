@@ -1,0 +1,11 @@
+
+{
+  "short_name": "Сканер",
+  "name": "PWA Сканер Чеков OCR",
+  "description": "Веб-приложение для сканирования чеков и отслеживания расходов.",
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#1f2937",
+  "background_color": "#f3f4f6",
+  "icons": []
+}
